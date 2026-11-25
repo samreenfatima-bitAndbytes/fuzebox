@@ -1,0 +1,209 @@
+# Contributing to Fuzebox Agent Performance Dashboard
+
+## Quick Start (Get Running in 5 Minutes)
+
+### Prerequisites
+- Python 3.11+
+- Git
+- A terminal
+
+### Setup
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/lesotto/Fuzebox.git
+cd Fuzebox
+
+# 2. Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Launch the API
+python webhook_server.py   # http://localhost:8000
+
+# 5. Launch the dashboard (separate terminal)
+cd frontend && npm install && npm run dev   # http://localhost:3000
+```
+
+The dashboard opens at `http://localhost:3000`. Click **"Load demo data"** in the header to populate agents, workflows, and traces.
+
+### Verify It Works
+
+Run the verification script to confirm all modules load and data flows correctly:
+
+```bash
+python verify_setup.py
+```
+
+You should see output confirming agents, tasks, spans, and workflows were created, plus summary metrics.
+
+---
+
+## Project Structure
+
+```
+Fuzebox/
+├── main.py                    # Stock reporting CLI (existing, don't modify)
+├── webhook_server.py          # FastAPI API + webhook entry point
+├── frontend/                  # Next.js dashboard (:3000)
+├── requirements.txt           # Python dependencies
+├── verify_setup.py            # Setup verification script
+├── src/
+│   ├── __init__.py
+│   ├── stock_data.py          # Existing stock reporting (don't modify)
+│   ├── daily_report.py        # Existing (don't modify)
+│   ├── weekly_chart.py        # Existing (don't modify)
+│   ├── monthly_charts.py      # Existing (don't modify)
+│   └── dashboard/             # ← ALL DASHBOARD CODE LIVES HERE
+│       ├── __init__.py
+│       ├── models.py          # Pydantic data models (Agent, Task, Span, Workflow)
+│       ├── db.py              # SQLite storage, CRUD operations, demo data seeder
+│       ├── tracing.py         # OpenTelemetry integration + custom SQLite exporter
+│       ├── evaluators.py      # Task completion scoring, skills/permissions matrices
+│       ├── economics.py       # Cost analysis, ROI, token usage, workflow economics
+│       ├── metrics.py         # Latency percentiles, throughput, agent leaderboard
+│       ├── *_page.py          # Dashboard data builders (consumed by FastAPI)
+│       └── quality.py         # Quality KPIs and task rows
+├── frontend/                  # Next.js dashboard UI
+├── webhook_server.py          # FastAPI API + webhook
+└── data/                      # Generated at runtime (gitignored)
+    ├── vip_play_stock.json    # Stock data (existing)
+    └── agent_dashboard.db     # SQLite database (auto-created)
+```
+
+---
+
+## Architecture Overview
+
+### Data Flow
+
+```
+Agent Workflow Execution
+        │
+        ▼
+┌─────────────────┐     OpenTelemetry spans auto-recorded
+│   tracing.py    │───► to SQLite via DashboardSpanExporter
+│ trace_agent_task│───► TaskRecord also written to SQLite
+└─────────────────┘
+        │
+        ▼
+┌─────────────────┐
+│     db.py       │     SQLite: agents, tasks, spans, workflows
+│  (storage)      │     All queries go through this module
+└─────────────────┘
+        │
+        ├──► evaluators.py  (scorecards, skills matrix, violations)
+        ├──► economics.py   (costs, ROI, token usage)
+        └──► metrics.py     (latency, throughput, leaderboard)
+                │
+                ▼
+        ┌──────────────────┐
+        │ webhook_server.py│     FastAPI exposes /api/* endpoints
+        │   (FastAPI)      │     Uses all modules above for data
+        └──────────────────┘
+                │
+                ▼
+        ┌──────────────────┐
+        │ frontend/        │     Next.js renders dashboard pages
+        │   (Next.js)      │     Fetches from /api/*
+        └──────────────────┘
+```
+
+### Key Data Models (models.py)
+
+| Model | Purpose | Key Fields |
+|-------|---------|------------|
+| `Agent` | Registered AI agent | skills, permissions, group, cost rates, model name |
+| `TaskRecord` | Single task execution | result, latency, tokens, cost, quality score |
+| `SpanRecord` | OpenTelemetry trace span | trace_id, parent_span_id, duration, attributes |
+| `WorkflowRecord` | Multi-agent workflow | agent_ids, task_ids, total cost, result |
+
+### Dashboard Pages (app.py)
+
+| # | Page | What It Shows |
+|---|------|---------------|
+| 1 | **Overview** | KPI cards, cost trend chart, throughput chart, leaderboard |
+| 2 | **Agent Registry** | Agent table, skills heatmap, permissions matrix, violations |
+| 3 | **Task Scorecards** | Pass/fail per agent, group evaluation, success by task type |
+| 4 | **Economic Analysis** | ROI calculator, cost by agent/type, token usage, workflow costs |
+| 5 | **Performance Metrics** | Completion rates, latency histogram, throughput trend, leaderboard |
+| 6 | **Workflow Traces** | Gantt timeline of spans, span detail table, trace selector |
+
+---
+
+## How to Add Features
+
+### Adding a new metric
+
+1. Add the query function in `metrics.py` or `economics.py`
+2. It should accept `start_date`/`end_date` filters and return a `dict` or `pd.DataFrame`
+3. Render it in the appropriate page in `app.py` using `st.metric()`, `st.dataframe()`, or `st.pyplot()`
+
+### Adding a new agent to demo data
+
+Edit the `agents_def` list in `db.py:seed_demo_data()`. Follow the existing pattern:
+
+```python
+Agent(
+    agent_id="agent-new-01",
+    name="My New Agent",
+    skills=["skill_a", "skill_b"],
+    permissions=["perm_x", "perm_y"],
+    group="my_group",
+    cost_per_1k_input=0.003,
+    cost_per_1k_output=0.015,
+    model_name="claude-sonnet-4-20250514",
+)
+```
+
+### Integrating a real agent framework
+
+Use the tracing context manager in your agent code:
+
+```python
+from src.dashboard.tracing import trace_agent_task
+
+# Register the agent first
+from src.dashboard.db import upsert_agent
+from src.dashboard.models import Agent
+upsert_agent(Agent(agent_id="my-agent", name="My Agent", skills=["code_gen"], permissions=["write"]))
+
+# Then trace tasks
+with trace_agent_task("my-agent", "code_generation") as ctx:
+    result = my_agent.run(prompt)  # Your agent framework call
+    ctx.set_tokens(input_tokens=result.usage.input, output_tokens=result.usage.output)
+    ctx.set_result("success" if result.ok else "failure")
+    ctx.set_quality(result.score)
+```
+
+---
+
+## Coding Standards
+
+- **No changes to existing stock reporting code** (`main.py`, `src/stock_data.py`, etc.)
+- All dashboard code goes in `src/dashboard/`
+- Use Pydantic models for any new data structures
+- Return `pd.DataFrame` or plain dict/list from query functions (consumed by FastAPI + Next.js)
+- Store all persistent data in the database via `db.py` — no new JSON files
+- Keep functions focused: query modules return data; Next.js components handle rendering
+
+## Deployment Notes
+
+### Docker Compose (recommended)
+```bash
+docker compose up --build
+# Dashboard: http://localhost:3000
+# API:       http://localhost:8000
+```
+
+### Environment Variables (optional)
+- `DASHBOARD_DB_PATH` — Override SQLite database location (default: `data/agent_dashboard.db`)
+
+---
+
+## Questions?
+
+Reach out to the project owner for architecture decisions or priority calls. When in doubt, keep it simple — we're building a POV, not a production system.

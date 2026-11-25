@@ -1,0 +1,1971 @@
+{
+  "id": "4a88e1ef-0007-435f-ac69-e1a80bf4dd03",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.agent_deployments": {
+      "name": "agent_deployments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "deployment_id": {
+          "name": "deployment_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_language": {
+          "name": "code_language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agent_kind": {
+          "name": "agent_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'agent'"
+        },
+        "classification": {
+          "name": "classification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AI-Primary'"
+        },
+        "trust_tier": {
+          "name": "trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'T2_supervised'"
+        },
+        "rop_target": {
+          "name": "rop_target",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3
+        },
+        "recursive_depth": {
+          "name": "recursive_depth",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 2
+        },
+        "reuse_from_uop": {
+          "name": "reuse_from_uop",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_code": {
+          "name": "raw_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manifest_json": {
+          "name": "manifest_json",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uop_instructions": {
+          "name": "uop_instructions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "validation_status": {
+          "name": "validation_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'valid'"
+        },
+        "validation_notes": {
+          "name": "validation_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'deployed'"
+        },
+        "signature": {
+          "name": "signature",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published_by": {
+          "name": "published_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "agent_deployments_tenant_id_idx": {
+          "name": "agent_deployments_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "agent_deployments_tenant_status_idx": {
+          "name": "agent_deployments_tenant_status_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "agent_deployments_tenant_id_tenants_id_fk": {
+          "name": "agent_deployments_tenant_id_tenants_id_fk",
+          "tableFrom": "agent_deployments",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "agent_deployments_deployment_id_unique": {
+          "name": "agent_deployments_deployment_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "deployment_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.agent_registry": {
+      "name": "agent_registry",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hyperscaler": {
+          "name": "hyperscaler",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trust_tier": {
+          "name": "trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'T2_supervised'"
+        },
+        "vendor": {
+          "name": "vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'green'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "agent_registry_tenant_id_idx": {
+          "name": "agent_registry_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "agent_registry_tenant_status_idx": {
+          "name": "agent_registry_tenant_status_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "agent_registry_tenant_id_tenants_id_fk": {
+          "name": "agent_registry_tenant_id_tenants_id_fk",
+          "tableFrom": "agent_registry",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "agent_registry_agent_id_unique": {
+          "name": "agent_registry_agent_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "agent_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.canonical_events": {
+      "name": "canonical_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "schema_version": {
+          "name": "schema_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'fbx-canonical-v1.0'"
+        },
+        "captured_at": {
+          "name": "captured_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decision_id": {
+          "name": "decision_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hyperscaler": {
+          "name": "hyperscaler",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endpoint": {
+          "name": "endpoint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transport": {
+          "name": "transport",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor_request_id": {
+          "name": "vendor_request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "captured_via": {
+          "name": "captured_via",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agent_kind": {
+          "name": "agent_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "human_user_id": {
+          "name": "human_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_agent_id": {
+          "name": "parent_agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skill": {
+          "name": "skill",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skill_version": {
+          "name": "skill_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trigger": {
+          "name": "trigger",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "input_tokens": {
+          "name": "input_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "output_tokens": {
+          "name": "output_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "tool_calls_json": {
+          "name": "tool_calls_json",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wall_ms": {
+          "name": "wall_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "vendor_cost_usd": {
+          "name": "vendor_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "amortized_cost_usd": {
+          "name": "amortized_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "passed_thresholds": {
+          "name": "passed_thresholds",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "human_review": {
+          "name": "human_review",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'auto'"
+        },
+        "rework_minutes": {
+          "name": "rework_minutes",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "ledger_account": {
+          "name": "ledger_account",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost_center": {
+          "name": "cost_center",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "human_baseline_minutes": {
+          "name": "human_baseline_minutes",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manual_hourly_cost_usd": {
+          "name": "manual_hourly_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "labor_value_saved_usd": {
+          "name": "labor_value_saved_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "uop_id": {
+          "name": "uop_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rop_value": {
+          "name": "rop_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cuow_value": {
+          "name": "cuow_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mer_value": {
+          "name": "mer_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "policy_outcome": {
+          "name": "policy_outcome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trust_tier": {
+          "name": "trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'T2_supervised'"
+        },
+        "audit_hash": {
+          "name": "audit_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prev_event_hash": {
+          "name": "prev_event_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_payload_ref": {
+          "name": "raw_payload_ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "canonical_events_tenant_id_idx": {
+          "name": "canonical_events_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "canonical_events_tenant_captured_at_idx": {
+          "name": "canonical_events_tenant_captured_at_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "captured_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "canonical_events_tenant_id_tenants_id_fk": {
+          "name": "canonical_events_tenant_id_tenants_id_fk",
+          "tableFrom": "canonical_events",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "canonical_events_event_id_unique": {
+          "name": "canonical_events_event_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "event_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coverage_manifest": {
+      "name": "coverage_manifest",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hyperscaler": {
+          "name": "hyperscaler",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "surface": {
+          "name": "surface",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "activated_at": {
+          "name": "activated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_telemetry_at": {
+          "name": "last_telemetry_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "signed_at": {
+          "name": "signed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "signature": {
+          "name": "signature",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "coverage_manifest_tenant_id_idx": {
+          "name": "coverage_manifest_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coverage_manifest_tenant_hyperscaler_surface_uniq": {
+          "name": "coverage_manifest_tenant_hyperscaler_surface_uniq",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "hyperscaler",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "surface",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coverage_manifest_tenant_id_tenants_id_fk": {
+          "name": "coverage_manifest_tenant_id_tenants_id_fk",
+          "tableFrom": "coverage_manifest",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.equation_snapshots": {
+      "name": "equation_snapshots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "computed_at": {
+          "name": "computed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "window_seconds": {
+          "name": "window_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3600
+        },
+        "cuow": {
+          "name": "cuow",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "abt": {
+          "name": "abt",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mer": {
+          "name": "mer",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ctr": {
+          "name": "ctr",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tv": {
+          "name": "tv",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rop": {
+          "name": "rop",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tuop": {
+          "name": "tuop",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "huop": {
+          "name": "huop",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "auop": {
+          "name": "auop",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "synergy_s": {
+          "name": "synergy_s",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "task_count": {
+          "name": "task_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "equation_snapshots_tenant_id_idx": {
+          "name": "equation_snapshots_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "equation_snapshots_tenant_computed_at_idx": {
+          "name": "equation_snapshots_tenant_computed_at_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "computed_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "equation_snapshots_tenant_id_tenants_id_fk": {
+          "name": "equation_snapshots_tenant_id_tenants_id_fk",
+          "tableFrom": "equation_snapshots",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.governance_decisions": {
+      "name": "governance_decisions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "decision_id": {
+          "name": "decision_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fired_at": {
+          "name": "fired_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "policy_outcome": {
+          "name": "policy_outcome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rationale": {
+          "name": "rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prev_trust_tier": {
+          "name": "prev_trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_trust_tier": {
+          "name": "new_trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reroute_from_model": {
+          "name": "reroute_from_model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reroute_to_model": {
+          "name": "reroute_to_model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "governance_decisions_tenant_id_idx": {
+          "name": "governance_decisions_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "governance_decisions_tenant_fired_at_idx": {
+          "name": "governance_decisions_tenant_fired_at_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "fired_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "governance_decisions_tenant_id_tenants_id_fk": {
+          "name": "governance_decisions_tenant_id_tenants_id_fk",
+          "tableFrom": "governance_decisions",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ledger_rows": {
+      "name": "ledger_rows",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "decision_id": {
+          "name": "decision_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skill_id": {
+          "name": "skill_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'open'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "closed_at": {
+          "name": "closed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "predicted_cost_usd": {
+          "name": "predicted_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "predicted_outcome_usd": {
+          "name": "predicted_outcome_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "predicted_signature": {
+          "name": "predicted_signature",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "predicted_signed_at": {
+          "name": "predicted_signed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uef_capability_fit": {
+          "name": "uef_capability_fit",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_gsti_score": {
+          "name": "uef_gsti_score",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_gsti_classification": {
+          "name": "uef_gsti_classification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_uop_value": {
+          "name": "uef_uop_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_coordination_tax": {
+          "name": "uef_coordination_tax",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_governance_score": {
+          "name": "uef_governance_score",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_runtime_fit": {
+          "name": "uef_runtime_fit",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_economic_value": {
+          "name": "uef_economic_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uef_risk_penalty": {
+          "name": "uef_risk_penalty",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stale_signal_flag": {
+          "name": "stale_signal_flag",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "actual_cost_usd": {
+          "name": "actual_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actual_outcome_usd": {
+          "name": "actual_outcome_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actual_source_sor": {
+          "name": "actual_source_sor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fuzebox_sig": {
+          "name": "fuzebox_sig",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rpotential_sig": {
+          "name": "rpotential_sig",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cosign_status": {
+          "name": "cosign_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
+        },
+        "tech_variance_sigma": {
+          "name": "tech_variance_sigma",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tech_error_rate": {
+          "name": "tech_error_rate",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "econ_win_rate_delta": {
+          "name": "econ_win_rate_delta",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "econ_cost_delta": {
+          "name": "econ_cost_delta",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "attribution_bucket": {
+          "name": "attribution_bucket",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "attribution_confidence": {
+          "name": "attribution_confidence",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "correction_type": {
+          "name": "correction_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "correction_ref": {
+          "name": "correction_ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "correction_applied_at": {
+          "name": "correction_applied_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "row_hash": {
+          "name": "row_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prev_row_hash": {
+          "name": "prev_row_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "ledger_rows_tenant_id_idx": {
+          "name": "ledger_rows_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ledger_rows_tenant_status_idx": {
+          "name": "ledger_rows_tenant_status_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ledger_rows_tenant_id_tenants_id_fk": {
+          "name": "ledger_rows_tenant_id_tenants_id_fk",
+          "tableFrom": "ledger_rows",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ledger_rows_decision_id_unique": {
+          "name": "ledger_rows_decision_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "decision_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.recommendations": {
+      "name": "recommendations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "rec_id": {
+          "name": "rec_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generated_at": {
+          "name": "generated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "template": {
+          "name": "template",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "severity": {
+          "name": "severity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'info'"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rationale": {
+          "name": "rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "predicted_delta_usd": {
+          "name": "predicted_delta_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'new'"
+        },
+        "decided_at": {
+          "name": "decided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decided_by": {
+          "name": "decided_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "recommendations_tenant_id_idx": {
+          "name": "recommendations_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "recommendations_tenant_status_idx": {
+          "name": "recommendations_tenant_status_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "recommendations_tenant_id_tenants_id_fk": {
+          "name": "recommendations_tenant_id_tenants_id_fk",
+          "tableFrom": "recommendations",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "recommendations_rec_id_unique": {
+          "name": "recommendations_rec_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "rec_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tenants": {
+      "name": "tenants",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan": {
+          "name": "plan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'starter'"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tenants_slug_unique": {
+          "name": "tenants_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.uop_library": {
+      "name": "uop_library",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "uop_id": {
+          "name": "uop_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workflow_id": {
+          "name": "workflow_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published_by": {
+          "name": "published_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "classification": {
+          "name": "classification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "labor_value_saved_usd": {
+          "name": "labor_value_saved_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amortized_cost_usd": {
+          "name": "amortized_cost_usd",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rop_value": {
+          "name": "rop_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cuow": {
+          "name": "cuow",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mer": {
+          "name": "mer",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "huop_share": {
+          "name": "huop_share",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "auop_share": {
+          "name": "auop_share",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "synergy_share": {
+          "name": "synergy_share",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trust_tier": {
+          "name": "trust_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signature": {
+          "name": "signature",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'published'"
+        },
+        "reuse_count": {
+          "name": "reuse_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "uop_library_tenant_id_idx": {
+          "name": "uop_library_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uop_library_tenant_status_idx": {
+          "name": "uop_library_tenant_status_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "uop_library_tenant_id_tenants_id_fk": {
+          "name": "uop_library_tenant_id_tenants_id_fk",
+          "tableFrom": "uop_library",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uop_library_uop_id_unique": {
+          "name": "uop_library_uop_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "uop_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "users_tenant_username_uniq": {
+          "name": "users_tenant_username_uniq",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "username",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_tenant_id_idx": {
+          "name": "users_tenant_id_idx",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "users_tenant_id_tenants_id_fk": {
+          "name": "users_tenant_id_tenants_id_fk",
+          "tableFrom": "users",
+          "tableTo": "tenants",
+          "columnsFrom": [
+            "tenant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1777634778542,
+      "tag": "0000_wild_wraith",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777643012016,
+      "tag": "0001_luxuriant_black_bird",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777651200000,
+      "tag": "0002_agent_registry_tenant_agent_unique",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777660000000,
+      "tag": "0003_trust_tier_default_t0",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777670000000,
+      "tag": "0004_governance_audit_context",
+      "breakpoints": true
+    }
+  ]
+}

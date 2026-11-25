@@ -1,0 +1,110 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fuzebox-postgres
+    environment:
+      POSTGRES_DB: fuzebox_db
+      POSTGRES_USER: fuzebox
+      POSTGRES_PASSWORD: fuzebox_secret
+    volumes:
+      - fuzebox-pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuzebox -d fuzebox_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    container_name: fuzebox-frontend-v2
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    restart: unless-stopped
+    depends_on:
+      webhook:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  webhook:
+    build: .
+    container_name: fuzebox-webhook-v2
+    command: python webhook_server.py
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app                      # DEV ONLY — remove before deploying to Railway
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://fuzebox:fuzebox_secret@postgres:5432/fuzebox_db
+      - WEBHOOK_RELOAD=true
+      # AEOS must listen on 0.0.0.0 (HOST=0.0.0.0) for container → host sync
+      - ECL_API_URL=http://host.docker.internal:5000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Legacy Streamlit UI — opt in: docker compose --profile legacy up
+  streamlit:
+    profiles: ["legacy"]
+    build: .
+    container_name: fuzebox-streamlit-v2
+    command: streamlit run dashboard_app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app                      # DEV ONLY — remove before deploying to Railway
+    env_file:
+      - .env
+    environment:
+      - WEBHOOK_URL=http://webhook:8000
+      - DATABASE_URL=postgresql://fuzebox:fuzebox_secret@postgres:5432/fuzebox_db
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  fuzebox-pgdata:
+    driver: local
+
+# ── NVIDIA GPU support (optional) ─────────────────────────────────────────────
+# To enable GPU access for local LLM inference, uncomment the deploy block
+# on both services and ensure nvidia-container-toolkit is installed on the host.
+#
+#   deploy:
+#     resources:
+#       reservations:
+#         devices:
+#           - driver: nvidia
+#             count: all
+#             capabilities: [gpu]

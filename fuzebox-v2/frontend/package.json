@@ -1,0 +1,37 @@
+{
+  "name": "fuzebox-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/ensure-next-cache.mjs",
+    "build": "next build",
+    "clean": "node scripts/clean-next.mjs",
+    "fix-cache": "node scripts/clean-next.mjs || (echo 'Run: sudo rm -rf .next' && exit 1)",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/plotly.js": "^3.0.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "^15.1.0",
+    "plotly.js": "^3.5.1",
+    "postcss": "^8.4.49",
+    "react-plotly.js": "^2.6.0",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2"
+  }
+}
